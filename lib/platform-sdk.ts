@@ -110,9 +110,13 @@ export const credits = {
     authToken?: string,
   ): Promise<{ success: boolean; newBalance: number; error?: string }> {
     try {
+      // Fixed 2026-08-01: the real endpoint reads app_id from an x-app-id
+      // HEADER, not the request body, and expects { amount, description } -
+      // same bug found and fixed in two other shared-service files tonight.
       const res = await platformFetch('/credits/spend', {
         method: 'POST',
-        body:   JSON.stringify({ user_id: userId, amount, action, app_id: appId }),
+        headers: { 'x-app-id': appId ?? 'unknown' },
+        body:   JSON.stringify({ amount, description: action }),
       }, authToken)
       if (!res.ok) {
         const err = await res.json()
@@ -137,6 +141,9 @@ export const credits = {
     reason:   string,
     authToken?: string,
   ): Promise<boolean> {
+    // Fixed 2026-08-01: /api/credits/grant did not exist at all (confirmed
+    // 404) - this function has always failed silently. Built the real
+    // endpoint (admin-only, uses the real cl_grant RPC) alongside this fix.
     try {
       const res = await platformFetch('/credits/grant', {
         method: 'POST',
@@ -153,9 +160,13 @@ export const credits = {
 
 export const payments = {
   // Create a Stripe checkout session
+  // Fixed 2026-08-01: sent { price_id } to an endpoint that reads
+  // { mode, tierId/productId } - every checkout through this function has
+  // failed since it was written. Now sends the real, correct shape.
   async createCheckout(params: {
     userId:     string
-    priceId:    string
+    priceId:    string   // interpreted as a real tier id (creator/pro/business/enterprise) or a real credit_packs.id
+    isOneTime?: boolean
     successUrl: string
     cancelUrl:  string
     authToken?: string
@@ -163,11 +174,12 @@ export const payments = {
     try {
       const res = await platformFetch('/payments/create-checkout', {
         method: 'POST',
-        body:   JSON.stringify({
-          user_id:     params.userId,
-          price_id:    params.priceId,
-          success_url: params.successUrl,
-          cancel_url:  params.cancelUrl,
+        body:   JSON.stringify(params.isOneTime ? {
+          mode: 'payment', productId: params.priceId,
+          successUrl: params.successUrl, cancelUrl: params.cancelUrl,
+        } : {
+          mode: 'subscription', tierId: params.priceId,
+          successUrl: params.successUrl, cancelUrl: params.cancelUrl,
         }),
       }, params.authToken)
       if (!res.ok) return null
@@ -175,7 +187,8 @@ export const payments = {
     } catch { return null }
   },
 
-  // Get subscription status
+  // Get subscription status - fixed 2026-08-01: the real endpoint resolves
+  // the user from the Bearer token itself, not a user_id query param.
   async getSubscription(userId: string, authToken?: string): Promise<{
     status:     string
     tier:       string
@@ -183,29 +196,28 @@ export const payments = {
     cancelAt?:  string
   } | null> {
     try {
-      const res = await platformFetch(`/payments/subscription?user_id=${userId}`, {}, authToken)
+      const res = await platformFetch(`/payments/subscription`, {}, authToken)
       if (!res.ok) return null
       return res.json()
     } catch { return null }
   },
 
-  // Standard pricing — same across all apps
+  // Fixed 2026-08-01: every one of these six price IDs was confirmed
+  // archived or entirely fake (price_credits_100/500/1000 were never real
+  // Stripe IDs at all). Also missing the real creator/enterprise tiers.
+  // Real, currently-active, tagged prices confirmed directly against Stripe.
   PRICES: {
-    starter_monthly:  process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER  ?? 'price_1SdaKx7YeQ1dZTUvCeaYqKXh',
-    pro_monthly:      process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO      ?? 'price_1Sk8AZ7YeQ1dZTUvwpubHpWW',
-    business_monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS ?? 'price_1SdaLG7YeQ1dZTUvCzgdjaTp',
-    credits_100:      process.env.NEXT_PUBLIC_STRIPE_CREDITS_100    ?? 'price_credits_100',
-    credits_500:      process.env.NEXT_PUBLIC_STRIPE_CREDITS_500    ?? 'price_credits_500',
-    credits_1000:     process.env.NEXT_PUBLIC_STRIPE_CREDITS_1000   ?? 'price_credits_1000',
+    creator_monthly:    process.env.STRIPE_CREATOR_PRICE_ID    ?? 'price_1TxXiO7YeQ1dZTUvwgT23pvs',
+    pro_monthly:        process.env.STRIPE_PRO_PRICE_ID        ?? 'price_1TxXiP7YeQ1dZTUvxsIrPlWU',
+    business_monthly:   process.env.STRIPE_BUSINESS_PRICE_ID   ?? 'price_1TxXiP7YeQ1dZTUv3oHHLsYZ',
+    enterprise_monthly: process.env.STRIPE_ENTERPRISE_PRICE_ID ?? 'price_1TxXiQ7YeQ1dZTUve0R0Sbaa',
   },
 
-  // Credit packages pricing
-  CREDIT_PACKAGES: [
-    { credits: 100,  price: 5,   bonus: 0,    id: 'credits_100'  },
-    { credits: 500,  price: 20,  bonus: 50,   id: 'credits_500'  },
-    { credits: 1000, price: 35,  bonus: 150,  id: 'credits_1000' },
-    { credits: 5000, price: 150, bonus: 1000, id: 'credits_5000' },
-  ],
+  // Fixed 2026-08-01: these numbers (100/500/1000/5000 credits) never
+  // matched any real product - the real credit_packs database table holds
+  // a completely different set. Real packs, fetch live from /api/pricing
+  // for the current list rather than hold a static copy here.
+  CREDIT_PACKAGES: [] as { credits: number; price: number; id: string }[],
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
