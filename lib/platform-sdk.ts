@@ -225,66 +225,51 @@ export const payments = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const ai = {
-  // Generate content using Javari AI (free models first)
+  // 2026-08-04: REWRITTEN. This used to call the AI providers
+  // DIRECTLY, with this app own provider keys from this app's own
+  // environment.
+  //
+  // That bypassed everything the platform exists to provide: the COST LAW
+  // cascade, the credit ledger, the safety content guard, knowledge retrieval
+  // and the craft patterns. This app charged nothing, protected nobody, and
+  // asked for deepseek-v4-flash — retired, and returning 404.
+  //
+  // Now the platform's OpenAI-compatible endpoint. Same request shape, one URL.
   async generate(params: {
     prompt:     string
     system?:    string
-    model?:     string  // defaults to free model
+    model?:     string
     maxTokens?: number
   }): Promise<string> {
-    const GROQ_KEY = process.env.GROQ_API_KEY ?? ''
-    const OR_KEY   = process.env.OPENROUTER_API_KEY ?? ''
-
-    // Try OpenRouter free first
-    if (OR_KEY) {
-      try {
-        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method:  'POST',
-          headers: {
-            'Content-Type':  'application/json',
-            'Authorization': `Bearer ${OR_KEY}`,
-            'HTTP-Referer':  'https://craudiovizai.com',
-          },
-          body: JSON.stringify({
-            model:      params.model ?? 'deepseek/deepseek-v4-flash:free',
-            max_tokens: params.maxTokens ?? 2048,
-            temperature: 0.7,
-            messages: [
-              ...(params.system ? [{ role: 'system', content: params.system }] : []),
-              { role: 'user', content: params.prompt },
-            ],
-          }),
-        })
-        if (res.ok) {
-          const d = await res.json() as { choices?: Array<{ message?: { content?: string } }> }
-          const text = d.choices?.[0]?.message?.content ?? ''
-          if (text.length > 20) return text
-        }
-      } catch { /* fall through */ }
-    }
-
-    // Groq fallback
-    if (GROQ_KEY) {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const base = process.env.NEXT_PUBLIC_CENTRAL_API_URL ?? 'https://craudiovizai.com'
+    try {
+      const res = await fetch(`${base}/api/v1/chat/completions`, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_KEY}` },
-        body:    JSON.stringify({
-          model:      'llama-3.3-70b-versatile',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-app-id': process.env.NEXT_PUBLIC_APP_NAME ?? 'satellite',
+        },
+        body: JSON.stringify({
+          // params.model is deliberately NOT sent. COST LAW decides on the
+          // platform side; an app naming a model does not override the cascade,
+          // and that is the spend this change exists to control.
           max_tokens: params.maxTokens ?? 2048,
-          temperature: 0.7,
           messages: [
             ...(params.system ? [{ role: 'system', content: params.system }] : []),
             { role: 'user', content: params.prompt },
           ],
         }),
       })
-      if (res.ok) {
-        const d = await res.json() as { choices?: Array<{ message?: { content?: string } }> }
-        return d.choices?.[0]?.message?.content ?? ''
+      if (!res.ok) {
+        console.error('[sdk.ai] platform returned', res.status)
+        return ''
       }
+      const d = await res.json() as { choices?: Array<{ message?: { content?: string } }> }
+      return d.choices?.[0]?.message?.content ?? ''
+    } catch (err) {
+      console.error('[sdk.ai] generate failed:', err instanceof Error ? err.message : err)
+      return ''
     }
-
-    throw new Error('AI service unavailable — check GROQ_API_KEY or OPENROUTER_API_KEY')
   },
 
   // Execute a multi-agent team task
