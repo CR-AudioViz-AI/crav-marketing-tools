@@ -19,7 +19,7 @@
     "tailwind-merge": "^2.5.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^3.6.0",
+    "date-fns": "^4.4.0",
     "recharts": "^2.15.0"
   },
   "devDependencies": {
