@@ -59,7 +59,7 @@ async function searchReddit(query: string, subreddit?: string, limit: number = 2
     });
 
     const response = await fetch(`${baseUrl}?${params}`, {
-      headers: { 'User-Agent': 'CRAVMarketingBot/1.0' },
+      headers: { 'User-Agent': 'JavariMarketingBot/1.0' },
     });
 
     if (!response.ok) return [];

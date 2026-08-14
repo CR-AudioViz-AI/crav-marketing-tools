@@ -49,7 +49,7 @@ export const PRICING_TIERS: PricingTier[] = [
       'Launch checklist generator',
       'Basic market trends',
       'Community support',
-      'CRAV tools recommendations',
+      'javari tools recommendations',
     ],
     limits: {
       strategiesPerMonth: 3,

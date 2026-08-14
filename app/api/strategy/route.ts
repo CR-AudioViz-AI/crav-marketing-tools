@@ -171,7 +171,7 @@ export async function GET() {
     },
     freeTier: {
       limit: '3 strategies/month',
-      features: ['Basic AI strategy', 'Platform recommendations', 'CRAV tool suggestions'],
+      features: ['Basic AI strategy', 'Platform recommendations', 'javari tool suggestions'],
     },
   });
 }

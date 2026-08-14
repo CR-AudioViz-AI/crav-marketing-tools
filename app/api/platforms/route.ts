@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   PLATFORMS,
   PLATFORM_CATEGORIES,
-  CRAV_TOOLS,
+  JAVARI_TOOLS,
   getPlatformsByCategory,
   getPlatformsByTier,
   getFreePlatforms,
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   const query = searchParams.get('q');
   const category = searchParams.get('category') as PlatformCategory | null;
   const tier = searchParams.get('tier') as 'free' | 'budget' | 'premium' | null;
-  const includeCrav = searchParams.get('includeCrav') !== 'false';
+  const includeJavari = searchParams.get('includeJavari') !== 'false';
   const limit = parseInt(searchParams.get('limit') || '50');
 
   let platforms = [...PLATFORMS];
@@ -52,9 +52,9 @@ export async function GET(request: NextRequest) {
   // Apply limit
   platforms = platforms.slice(0, limit);
 
-  // Get CRAV alternatives if requested
-  const cravAlternatives = includeCrav
-    ? CRAV_TOOLS.filter((tool) => {
+  // Get JAVARI alternatives if requested
+  const javariAlternatives = includeJavari
+    ? JAVARI_TOOLS.filter((tool) => {
         if (category) {
           return tool.category === category;
         }
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     success: true,
     platforms,
-    cravAlternatives,
+    javariAlternatives,
     categories: PLATFORM_CATEGORIES,
     stats,
     meta: {
@@ -120,8 +120,8 @@ export async function POST(request: NextRequest) {
       return tierOrder[a.tier] - tierOrder[b.tier];
     });
 
-    // Get matching CRAV tools
-    const cravRecommendations = CRAV_TOOLS.filter((tool) =>
+    // Get matching JAVARI tools
+    const javariRecommendations = JAVARI_TOOLS.filter((tool) =>
       channels?.includes(tool.category)
     ).map((tool) => ({
       ...tool,
@@ -144,16 +144,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (cravRecommendations.length > 0) {
+    if (javariRecommendations.length > 0) {
       insights.push(
-        `${cravRecommendations.length} CRAV tools can help automate your workflow`
+        `${javariRecommendations.length} JAVARI tools can help automate your workflow`
       );
     }
 
     return NextResponse.json({
       success: true,
       recommendations: recommendations.slice(0, 20),
-      cravRecommendations,
+      javariRecommendations,
       insights,
       meta: {
         criteria: { industry, goal, budget, channels },

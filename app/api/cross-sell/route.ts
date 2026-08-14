@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 // ============================================================================
 // CR AUDIOVIZ AI - CROSS-SELL API
-// GET /api/cross-sell - Get personalized CRAV product recommendations
+// GET /api/cross-sell - Get personalized javari product recommendations
 // ============================================================================
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,8 +17,8 @@ function getSupabase() {
 
 
 
-// Full CRAV product catalog
-const CRAV_PRODUCTS = [
+// Full javari product catalog
+const javari_PRODUCTS = [
   // Creative Tools
   {
     id: 'social-graphics',
@@ -227,14 +227,14 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get('limit') || '5');
   const excludeIds = searchParams.get('exclude')?.split(',') || [];
 
-  let recommendations: typeof CRAV_PRODUCTS = [];
+  let recommendations: typeof javari_PRODUCTS = [];
   let matchReason = 'Recommended for you';
 
   // Find matching rules
   if (context) {
     for (const rule of RECOMMENDATION_RULES) {
       if (rule.trigger.some((t) => context.includes(t))) {
-        const matchedProducts = CRAV_PRODUCTS.filter(
+        const matchedProducts = javari_PRODUCTS.filter(
           (p) => rule.products.includes(p.id) && !excludeIds.includes(p.id)
         );
         recommendations.push(...matchedProducts);
@@ -250,10 +250,10 @@ export async function GET(request: NextRequest) {
 
   // If no matches, return popular products
   if (recommendations.length === 0) {
-    recommendations = CRAV_PRODUCTS.filter(
+    recommendations = javari_PRODUCTS.filter(
       (p) => !excludeIds.includes(p.id)
     ).slice(0, limit);
-    matchReason = 'Popular CRAV tools';
+    matchReason = 'Popular javari tools';
   }
 
   // Remove duplicates and limit - use Array.from for TypeScript compatibility
@@ -268,7 +268,7 @@ export async function GET(request: NextRequest) {
       matchReason,
     })),
     categories: ['creative', 'writing', 'marketing', 'business', 'audio'],
-    totalProducts: CRAV_PRODUCTS.length,
+    totalProducts: javari_PRODUCTS.length,
     meta: {
       context,
       category,

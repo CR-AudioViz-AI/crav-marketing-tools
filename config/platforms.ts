@@ -13,7 +13,7 @@ export interface MarketingPlatform {
   pricing?: string;
   features: string[];
   bestFor: string[];
-  cravAlternative?: {
+  javariAlternative?: {
     name: string;
     url: string;
     description: string;
@@ -98,8 +98,8 @@ export const PLATFORMS: MarketingPlatform[] = [
     pricing: 'Free with limits',
     features: ['Templates', 'Basic editing', 'Social sizes'],
     bestFor: ['Non-designers', 'Quick graphics'],
-    cravAlternative: {
-      name: 'CRAV Social Graphics',
+    javariAlternative: {
+      name: 'JAVARI Social Graphics',
       url: 'https://craudiovizai.com/tools/social-graphics',
       description: 'AI-powered social media graphics generator',
     },
@@ -153,8 +153,8 @@ export const PLATFORMS: MarketingPlatform[] = [
     pricing: 'Free up to 500 contacts',
     features: ['500 contacts', '1,000 sends/mo', 'Basic templates'],
     bestFor: ['Startups', 'Small lists'],
-    cravAlternative: {
-      name: 'CRAV Email Builder',
+    javariAlternative: {
+      name: 'JAVARI Email Builder',
       url: 'https://craudiovizai.com/tools/email-builder',
       description: 'AI-powered email template generator',
     },
@@ -353,8 +353,8 @@ export const PLATFORMS: MarketingPlatform[] = [
     pricing: 'Free with limits',
     features: ['Grammar check', 'Spelling', 'Basic suggestions'],
     bestFor: ['All writers'],
-    cravAlternative: {
-      name: 'CRAV Writing Assistant',
+    javariAlternative: {
+      name: 'JAVARI Writing Assistant',
       url: 'https://craudiovizai.com/tools/writing-assistant',
       description: 'AI writing assistant with style suggestions',
     },
@@ -463,8 +463,8 @@ export const PLATFORMS: MarketingPlatform[] = [
     pricing: 'Free',
     features: ['Unlimited uploads', 'Monetization', 'Analytics'],
     bestFor: ['Video content', 'Tutorials', 'Brand channels'],
-    cravAlternative: {
-      name: 'CRAV Video Creator',
+    javariAlternative: {
+      name: 'JAVARI Video Creator',
       url: 'https://craudiovizai.com/tools/video-creator',
       description: 'AI-powered video creation and editing',
     },
@@ -737,54 +737,54 @@ export const PLATFORMS: MarketingPlatform[] = [
 ];
 
 // ============================================================================
-// CRAV TOOL ALTERNATIVES
+// JAVARI TOOL ALTERNATIVES
 // ============================================================================
 
-export const CRAV_TOOLS = [
+export const JAVARI_TOOLS = [
   {
-    id: 'crav-social-graphics',
-    name: 'CRAV Social Graphics',
+    id: 'javari-social-graphics',
+    name: 'JAVARI Social Graphics',
     category: 'social',
     url: 'https://craudiovizai.com/tools/social-graphics',
     description: 'AI-powered social media graphics generator',
     replaces: ['Canva', 'Adobe Express'],
-    pricing: 'Included in CRAV subscription',
+    pricing: 'Included in JAVARI subscription',
   },
   {
-    id: 'crav-email-builder',
-    name: 'CRAV Email Builder',
+    id: 'javari-email-builder',
+    name: 'JAVARI Email Builder',
     category: 'email',
     url: 'https://craudiovizai.com/tools/email-builder',
     description: 'AI email template generator',
     replaces: ['Mailchimp templates', 'Stripo'],
-    pricing: 'Included in CRAV subscription',
+    pricing: 'Included in JAVARI subscription',
   },
   {
-    id: 'crav-video-creator',
-    name: 'CRAV Video Creator',
+    id: 'javari-video-creator',
+    name: 'JAVARI Video Creator',
     category: 'video',
     url: 'https://craudiovizai.com/tools/video-creator',
     description: 'AI video creation and editing',
     replaces: ['Loom', 'Descript'],
-    pricing: 'Included in CRAV subscription',
+    pricing: 'Included in JAVARI subscription',
   },
   {
-    id: 'crav-writing-assistant',
-    name: 'CRAV Writing Assistant',
+    id: 'javari-writing-assistant',
+    name: 'JAVARI Writing Assistant',
     category: 'content',
     url: 'https://craudiovizai.com/tools/writing-assistant',
     description: 'AI writing assistant',
     replaces: ['Grammarly', 'Jasper'],
-    pricing: 'Included in CRAV subscription',
+    pricing: 'Included in JAVARI subscription',
   },
   {
-    id: 'crav-seo-analyzer',
-    name: 'CRAV SEO Analyzer',
+    id: 'javari-seo-analyzer',
+    name: 'JAVARI SEO Analyzer',
     category: 'seo',
     url: 'https://craudiovizai.com/tools/seo-analyzer',
     description: 'AI-powered SEO analysis',
     replaces: ['Ubersuggest', 'Moz'],
-    pricing: 'Included in CRAV subscription',
+    pricing: 'Included in JAVARI subscription',
   },
 ];
 
@@ -815,11 +815,11 @@ export function searchPlatforms(query: string): MarketingPlatform[] {
   );
 }
 
-export function getPlatformsWithCravAlternatives(): MarketingPlatform[] {
-  return PLATFORMS.filter((p) => p.cravAlternative);
+export function getPlatformsWithJavariAlternatives(): MarketingPlatform[] {
+  return PLATFORMS.filter((p) => p.javariAlternative);
 }
 
-export function getCravAlternativeFor(platformId: string): MarketingPlatform['cravAlternative'] | undefined {
+export function getJavariAlternativeFor(platformId: string): MarketingPlatform['javariAlternative'] | undefined {
   const platform = PLATFORMS.find((p) => p.id === platformId);
-  return platform?.cravAlternative;
+  return platform?.javariAlternative;
 }

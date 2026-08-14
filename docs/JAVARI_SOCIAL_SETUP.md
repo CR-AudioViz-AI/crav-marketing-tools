@@ -51,7 +51,7 @@ This gives you:
 
 ## STEP 3: Set Environment Variables (Vercel Dashboard)
 
-Go to: Vercel → crav-marketing-tools → Settings → Environment Variables
+Go to: Vercel → javari-marketing-tools → Settings → Environment Variables
 
 ```
 CREDENTIALS_ENCRYPTION_KEY=cr-javari-your-secret-key-here-32ch

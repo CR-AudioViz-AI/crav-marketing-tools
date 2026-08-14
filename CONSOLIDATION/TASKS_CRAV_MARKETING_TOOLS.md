@@ -1,4 +1,4 @@
-# Consolidation tasks: crav-marketing-tools → javari-marketing
+# Consolidation tasks: javari-marketing-tools → javari-marketing
 ## Source archived: June 2026 (was also a Vercel project — removed)
 
 ### Major features to implement in javari-marketing:
@@ -40,4 +40,4 @@
 - [ ] Scheduler controls
 - [ ] Platform seed data
 
-#### Source reference: https://github.com/CR-AudioViz-AI/crav-marketing-tools (archived)
+#### Source reference: https://github.com/CR-AudioViz-AI/javari-marketing-tools (archived)

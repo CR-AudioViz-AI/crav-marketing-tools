@@ -122,7 +122,7 @@ export async function searchReddit(
     });
 
     const response = await fetch(`${baseUrl}?${params}`, {
-      headers: { 'User-Agent': 'CRAVMarketingBot/1.0' },
+      headers: { 'User-Agent': 'JavariMarketingBot/1.0' },
     });
 
     if (!response.ok) {
@@ -162,7 +162,7 @@ export async function getSubredditPosts(
   try {
     const response = await fetch(
       `${REDDIT_BASE}/r/${subreddit}/${sort}.json?limit=${limit}`,
-      { headers: { 'User-Agent': 'CRAVMarketingBot/1.0' } }
+      { headers: { 'User-Agent': 'JavariMarketingBot/1.0' } }
     );
 
     if (!response.ok) throw new Error(`Reddit error: ${response.status}`);

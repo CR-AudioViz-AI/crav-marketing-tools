@@ -3,7 +3,7 @@
 // Multi-AI routing: Groq (FREE) → Perplexity → OpenAI (fallback)
 // ============================================================================
 
-import { CRAV_TOOLS } from '@/config/platforms';
+import { JAVARI_TOOLS } from '@/config/platforms';
 import { CAMPAIGN_GOALS, INDUSTRIES } from '@/config/pricing';
 
 export interface StrategyRequest {
@@ -32,7 +32,7 @@ export interface MarketingStrategy {
   budget: BudgetAllocation;
   metrics: KPI[];
   quickWins: string[];
-  cravRecommendations: CravRecommendation[];
+  javariRecommendations: JavariRecommendation[];
   generatedAt: string;
   aiProvider: string;
 }
@@ -66,7 +66,7 @@ export interface KPI {
   measurementMethod: string;
 }
 
-export interface CravRecommendation {
+export interface JavariRecommendation {
   productName: string;
   productUrl: string;
   reason: string;
@@ -261,28 +261,28 @@ async function callOpenAI(prompt: string): Promise<string> {
 }
 
 // ============================================================================
-// CRAV RECOMMENDATIONS
+// JAVARI RECOMMENDATIONS
 // ============================================================================
 
-function generateCravRecommendations(
+function generateJavariRecommendations(
   channels: string[],
   industry: string
-): CravRecommendation[] {
-  const recommendations: CravRecommendation[] = [];
+): JavariRecommendation[] {
+  const recommendations: JavariRecommendation[] = [];
 
-  // Map channels to CRAV tools
+  // Map channels to JAVARI tools
   const channelToolMap: Record<string, string[]> = {
-    social: ['crav-social-graphics'],
-    email: ['crav-email-builder'],
-    video: ['crav-video-creator'],
-    content: ['crav-writing-assistant'],
-    seo: ['crav-seo-analyzer'],
+    social: ['javari-social-graphics'],
+    email: ['javari-email-builder'],
+    video: ['javari-video-creator'],
+    content: ['javari-writing-assistant'],
+    seo: ['javari-seo-analyzer'],
   };
 
   for (const channel of channels) {
     const toolIds = channelToolMap[channel] || [];
     for (const toolId of toolIds) {
-      const tool = CRAV_TOOLS.find((t) => t.id === toolId);
+      const tool = JAVARI_TOOLS.find((t) => t.id === toolId);
       if (tool) {
         recommendations.push({
           productName: tool.name,
@@ -297,7 +297,7 @@ function generateCravRecommendations(
   // Add general recommendations based on industry
   if (['ecommerce', 'saas', 'agency'].includes(industry)) {
     recommendations.push({
-      productName: 'CRAV Analytics Dashboard',
+      productName: 'JAVARI Analytics Dashboard',
       productUrl: 'https://craudiovizai.com/tools/analytics',
       reason: 'Track all your marketing metrics in one place',
       relevance: 'medium',
@@ -363,7 +363,7 @@ export async function generateStrategy(
     },
     metrics: parsed.metrics || [],
     quickWins: parsed.quickWins || [],
-    cravRecommendations: generateCravRecommendations(request.platforms, request.industry),
+    javariRecommendations: generateJavariRecommendations(request.platforms, request.industry),
     generatedAt: new Date().toISOString(),
     aiProvider: provider,
   };

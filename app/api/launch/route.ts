@@ -58,7 +58,7 @@ const LAUNCH_TASKS: LaunchTask[] = [
     resources: [
       { name: 'Carrd (Free)', url: 'https://carrd.co' },
       { name: 'Framer (Free tier)', url: 'https://framer.com' },
-      { name: 'CRAV Landing Builder', url: 'https://craudiovizai.com/tools/landing' },
+      { name: 'javari Landing Builder', url: 'https://craudiovizai.com/tools/landing' },
     ],
   },
   {
@@ -71,7 +71,7 @@ const LAUNCH_TASKS: LaunchTask[] = [
     resources: [
       { name: 'Canva (Free)', url: 'https://canva.com' },
       { name: 'Loom (Free)', url: 'https://loom.com' },
-      { name: 'CRAV Social Graphics', url: 'https://craudiovizai.com/tools/social-graphics' },
+      { name: 'javari Social Graphics', url: 'https://craudiovizai.com/tools/social-graphics' },
     ],
     tips: [
       'Product Hunt recommends a GIF or video',
@@ -357,7 +357,7 @@ export async function POST(request: NextRequest) {
       tasks = tasks.map((task) => ({
         ...task,
         resources: task.resources?.filter(
-          (r) => r.name.toLowerCase().includes('free') || r.name.includes('CRAV')
+          (r) => r.name.toLowerCase().includes('free') || r.name.includes('javari')
         ),
       }));
     }

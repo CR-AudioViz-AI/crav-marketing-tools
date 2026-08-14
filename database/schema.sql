@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS newsletters (
     subscriber_count INTEGER DEFAULT 0,
     template_id UUID,
     content_sources JSONB, -- RSS feeds, social accounts, etc
-    cross_sell_products JSONB, -- CRAV products to cross-sell
+    cross_sell_products JSONB, -- javari products to cross-sell
     settings JSONB,
     status TEXT DEFAULT 'active',
     created_at TIMESTAMPTZ DEFAULT NOW(),

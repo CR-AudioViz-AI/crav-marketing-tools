@@ -13,13 +13,13 @@ Part of the CR AudioViz AI ecosystem - *Your Story. Our Design.*
 - Prioritizes FREE solutions before paid alternatives
 - Multi-AI routing (Groq → Perplexity → OpenAI)
 - Industry-specific recommendations
-- Cross-sell CRAV tools where applicable
+- Cross-sell javari tools where applicable
 
 ### 🌍 Platform Finder
 - 100+ marketing platforms organized by category
 - **FREE → Budget → Premium** hierarchy (always shows free first)
 - Categories: Social, Email, SEO, Content, Local, Community, Video
-- Integrated CRAV tool alternatives
+- Integrated javari tool alternatives
 - Filter by tier, category, and budget
 
 ### 🚀 Launch Checklist
@@ -55,8 +55,8 @@ Part of the CR AudioViz AI ecosystem - *Your Story. Our Design.*
 
 ```bash
 # Clone the repository
-git clone https://github.com/CR-AudioViz-AI/crav-marketing-tools.git
-cd crav-marketing-tools
+git clone https://github.com/CR-AudioViz-AI/javari-marketing-tools.git
+cd javari-marketing-tools
 
 # Install dependencies
 npm install
@@ -96,7 +96,7 @@ IPINFO_TOKEN=          # 50K req/month free
 ## 📁 Project Structure
 
 ```
-crav-marketing-tools/
+javari-marketing-tools/
 ├── src/
 │   └── app/
 │       ├── api/
@@ -194,12 +194,12 @@ Get market research
 
 ## 🔗 Cross-sell Integration
 
-Every marketing recommendation includes relevant CRAV tool suggestions:
+Every marketing recommendation includes relevant javari tool suggestions:
 
-- **Social Strategy** → CRAV Social Graphics
-- **Email Campaigns** → CRAV Newsletter
-- **Competitor Analysis** → CRAV Competitive Intelligence
-- **Brand/Logo** → CRAV Logo Studio
+- **Social Strategy** → javari Social Graphics
+- **Email Campaigns** → javari Newsletter
+- **Competitor Analysis** → javari Competitive Intelligence
+- **Brand/Logo** → javari Logo Studio
 - **AI Assistance** → Javari AI
 
 ---
@@ -208,7 +208,7 @@ Every marketing recommendation includes relevant CRAV tool suggestions:
 
 Deploy to Vercel with one click:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/CR-AudioViz-AI/crav-marketing-tools)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/CR-AudioViz-AI/javari-marketing-tools)
 
 Or manually:
 
