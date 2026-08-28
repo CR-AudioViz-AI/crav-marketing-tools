@@ -4,6 +4,7 @@
 // CR AudioViz AI · EIN 39-3646201 · June 2026
 // Beats Buffer, Mailchimp, ConvertKit, Hootsuite combined
 import { useState, useCallback, useEffect, useRef } from "react";
+import { publishableKey, supabaseUrl } from "@craudioviz/platform-sdk";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Tab = "compose" | "email" | "drip" | "announce" | "subscribers" | "analytics";
@@ -50,8 +51,8 @@ interface Subscriber { id: string; email: string; first_name: string; status: st
 interface DripsData   { id: string; title: string; total_chapters: number; subscriber_count: number; status: string; cadence_days: number; }
 interface PostResult  { platform: string; content: string; hashtags: string[]; charCount: number; }
 
-const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const SB_URL = supabaseUrl();
+const SB_KEY = publishableKey();
 
 async function sbFetch(table: string, method = "GET", body?: object, params = "") {
   const r = await fetch(`${SB_URL}/rest/v1/${table}${params}`, {

@@ -5,6 +5,7 @@
 // ============================================================================
 
 import { createClient } from '@supabase/supabase-js';
+import { secretKey, supabaseUrl } from "@craudioviz/platform-sdk";
 
 // ============================================================================
 // TYPES
@@ -334,8 +335,8 @@ export class CampaignManager {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      supabaseUrl(),
+      secretKey()
     );
   }
 
