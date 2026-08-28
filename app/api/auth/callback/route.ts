@@ -1,17 +1,18 @@
+import { secretKey, publishableKey, supabaseUrl } from "@craudioviz/platform-sdk";
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server';
 
 function getSupabase() {
   var sb = require('@supabase/supabase-js')
-  var url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  var key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  var url = supabaseUrl()
+  var key = secretKey()
   if (!url || !key) return null
   return sb.createClient(url, key, { auth: { persistSession: false } })
 }
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://kteobfyferrukqeolofj.supabase.co';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0ZW9iZnlmZXJydWtxZW9sb2ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxOTcyNjYsImV4cCI6MjA3NzU1NzI2Nn0.uy-jlF_z6qVb8qogsNyGDLHqT4HhmdRhLrW7zPv3qhY';
+const SUPABASE_URL = supabaseUrl();
+const SUPABASE_ANON_KEY = publishableKey();
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);

@@ -1,15 +1,16 @@
+import { secretKey, supabaseUrl } from "@craudioviz/platform-sdk";
 // Universal Credits Integration - CR AudioViz AI
 
 function getSupabase() {
   var sb = require('@supabase/supabase-js')
-  var url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  var key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  var url = supabaseUrl()
+  var key = secretKey()
   if (!url || !key) return null
   return sb.createClient(url, key, { auth: { persistSession: false } })
 }
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://kteobfyferrukqeolofj.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_URL = supabaseUrl();
+const SUPABASE_SERVICE_KEY = secretKey();
 
   return data ? data.balance >= amount : false;
 }
