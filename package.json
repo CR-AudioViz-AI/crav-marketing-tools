@@ -21,7 +21,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "recharts": "^2.15.0",
-    "@craudioviz/platform-sdk": "git+https://github.com/CR-AudioViz-AI/platform-sdk.git"
+    "@craudioviz/platform-sdk": "git+https://github.com/CR-AudioViz-AI/platform-sdk.git#589941b779f0780cd8e7c3d5cfc5b6fe93b7a9d8"
   },
   "devDependencies": {
     "@types/node": "^20.17.24",
