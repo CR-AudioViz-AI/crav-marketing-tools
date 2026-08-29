@@ -1,4 +1,5 @@
 import { secretKey, supabaseUrl } from "@craudioviz/platform-sdk";
+import { selfOrigin } from '@/lib/social/egress';
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server';
@@ -76,7 +77,8 @@ export async function GET(request: NextRequest) {
 
     try {
       // Call auto-post endpoint internally
-      const baseUrl = request.nextUrl.origin;
+      // See lib/social/egress.ts — the request's own origin is caller-controlled.
+      const baseUrl = selfOrigin();
       const response = await fetch(`${baseUrl}/api/admin/auto-post`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

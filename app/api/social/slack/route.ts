@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server';
+import { assertSlackWebhook } from '@/lib/social/egress';
 
 interface SlackBlock {
   type: string;
@@ -111,6 +112,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send to Slack
+    await assertSlackWebhook(webhookUrl);
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

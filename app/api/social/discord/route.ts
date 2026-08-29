@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server';
+import { assertDiscordWebhook } from '@/lib/social/egress';
 
 interface DiscordEmbed {
   title?: string;
@@ -90,6 +91,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send to Discord
+    await assertDiscordWebhook(webhookUrl);
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -146,6 +148,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Test the webhook
+    await assertDiscordWebhook(webhookUrl);
     const response = await fetch(webhookUrl, { method: 'GET' });
     
     if (response.ok) {

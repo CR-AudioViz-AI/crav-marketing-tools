@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server';
+import { assertMastodonInstance } from '@/lib/social/egress';
 
 // Mastodon is decentralized - each instance has its own API
 // User provides: instance URL + access token (from their instance settings)
@@ -28,7 +29,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Clean instance URL
-    const instance = instanceUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    // Federated, so the host is legitimately the caller's choice — but it
+    // must still be a plain public hostname, not a private range, not
+    // 169.254.169.254, and not a name that resolves to either.
+    const instance = await assertMastodonInstance(instanceUrl);
 
     // Mastodon has 500 char limit by default (some instances allow more)
     const truncatedContent = content.length > 500 ? content.substring(0, 497) + '...' : content;
@@ -88,7 +92,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const instance = instanceUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const instance = await assertMastodonInstance(instanceUrl);
 
   try {
     const response = await fetch(`https://${instance}/api/v1/accounts/verify_credentials`, {

@@ -1,4 +1,5 @@
 import { secretKey, supabaseUrl } from "@craudioviz/platform-sdk";
+import { telegramUrl } from '@/lib/social/egress';
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server';
@@ -12,7 +13,9 @@ function getSupabase() {
 }
 
 
-const TELEGRAM_API = 'https://api.telegram.org/bot';
+// TELEGRAM_API is gone: the URL is built by telegramUrl(), which pins the host
+// and encodes the token as a single path segment. A bare prefix constant is what
+// let the token be concatenated into a path in the first place.
 
 // POST - Send message via Telegram Bot
 export async function POST(request: NextRequest) {
@@ -49,7 +52,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const baseUrl = `${TELEGRAM_API}${botToken}`;
+    // Shape-checked and encoded. A token containing ../ would otherwise walk
+    // to a different endpoint, and one containing ? or # would truncate the
+    // path this code believes it is calling.
+    const photoUrl = telegramUrl(botToken, 'sendPhoto');
+    const messageUrl = telegramUrl(botToken, 'sendMessage');
     const results: Array<{ type: string; success: boolean; messageId?: number }> = [];
 
     // Format content with optional link
@@ -64,7 +71,7 @@ export async function POST(request: NextRequest) {
     // Send photos first if provided
     if (mediaUrls?.length > 0) {
       for (const url of mediaUrls.slice(0, 10)) {
-        const photoResponse = await fetch(`${baseUrl}/sendPhoto`, {
+        const photoResponse = await fetch(photoUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -91,7 +98,7 @@ export async function POST(request: NextRequest) {
 
     // Send text if we have content and didn't already send with photo
     if (formattedContent) {
-      const textResponse = await fetch(`${baseUrl}/sendMessage`, {
+      const textResponse = await fetch(messageUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -152,7 +159,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${TELEGRAM_API}${botToken}/getMe`);
+    const response = await fetch(telegramUrl(botToken, 'getMe'));
     const data = await response.json();
 
     if (data.ok) {

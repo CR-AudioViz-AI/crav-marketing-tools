@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server';
+import { selfOrigin } from '@/lib/social/egress';
 
 interface PostTarget {
   platform: string;
@@ -48,7 +49,10 @@ export async function POST(request: NextRequest) {
     }
 
     const results: PostResult[] = [];
-    const baseUrl = request.nextUrl.origin;
+    // NOT request.nextUrl.origin. That is built from the caller's Host
+    // header, so `Host: attacker.example` would make this route POST the
+    // webhook URLs and bot tokens in its own payload to the attacker.
+    const baseUrl = selfOrigin();
 
     // Process each target
     for (const target of targets as PostTarget[]) {
