@@ -19,18 +19,55 @@ function getSupabase() {
 }
 
 
+
+/**
+ * 2026-09-06: the caller's identity comes from their token, never from the URL.
+ *
+ * This route read userId from the query string and used it against a client
+ * built with secretKey() - the service-role credential - which bypasses row
+ * level security entirely. Anyone could read any account's credit balance and
+ * transaction history by putting somebody else's id in a URL.
+ *
+ * Found by the census: 1,657 routes enumerated across the estate, this one among
+ * 1,257 that no hand-built list had ever included.
+ *
+ * The fix is not to validate the id. There is no way to check that an id in a
+ * request belongs to the person sending it, because the request is the thing
+ * being questioned.
+ */
+async function callerId(request: NextRequest): Promise<string | null> {
+  const header = request.headers.get('authorization') ?? '';
+  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : null;
+  if (!token) return null;
+  const sb = getSupabase();
+  if (!sb) return null;
+  try {
+    const { data, error } = await sb.auth.getUser(token);
+    if (error || !data?.user) return null;
+    return data.user.id as string;
+  } catch {
+    return null;
+  }
+}
+
+function unauthorised(): NextResponse {
+  return NextResponse.json(
+    { error: 'Sign in required.', code: 'AUTH_REQUIRED' },
+    { status: 401 },
+  );
+}
+
 // GET - Get user's credit balance and info
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const userId = await callerId(request);
+    if (!userId) return unauthorised();
     const action = searchParams.get('action') as CreditAction | null;
     const includeHistory = searchParams.get('history') === 'true';
     const limit = parseInt(searchParams.get('limit') || '20');
     
-    if (!userId) {
-      return NextResponse.json({ error: 'userId required' }, { status: 400 });
-    }
+
 
     // Get balance
     const balance = await getBalance(userId);
@@ -73,7 +110,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, amount, source, metadata, adminKey } = body;
+    const {amount, source, metadata, adminKey} = body;
+    const userId = await callerId(request);
+    if (!userId) return unauthorised();;
 
     // Validate admin key for credit additions
     const validAdminKey = process.env.ADMIN_API_KEY || 'cr-javari-admin-2025';
