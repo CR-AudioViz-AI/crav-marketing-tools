@@ -26,11 +26,39 @@ interface PlanConfig {
 }
 
 // GET - Get tenant info or list all for admin
+
+/**
+ * 2026-09-06: identity from the caller's token, never from the request.
+ *
+ * This route took a user id from the caller and used it against a client built
+ * with secretKey() - the service-role credential - which bypasses row level
+ * security entirely, so it acted on whichever account the caller named.
+ */
+async function __callerId(request: Request): Promise<string | null> {
+  const header = request.headers.get('authorization') ?? '';
+  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : null;
+  if (!token) return null;
+  try {
+    const sb = getSupabase();
+    if (!sb) return null;
+    const { data, error } = await sb.auth.getUser(token);
+    if (error || !data?.user) return null;
+    return data.user.id as string;
+  } catch {
+    return null;
+  }
+}
+
+function __unauthorised() {
+  return NextResponse.json({ error: 'Sign in required.', code: 'AUTH_REQUIRED' }, { status: 401 });
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const tenantId = searchParams.get('id');
-    const userId = searchParams.get('userId');
+    const userId = await __callerId(request);
+    if (!userId) return __unauthorised();
 
     if (tenantId) {
       // Get specific tenant
@@ -94,7 +122,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, userId, email } = body;
+    const {name,  email} = body;
+    const userId = await __callerId(request);
+    if (!userId) return __unauthorised();
 
     if (!name || !userId) {
       return NextResponse.json(
