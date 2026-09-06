@@ -16,7 +16,7 @@ async function ai(prompt: string): Promise<string> {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: "Bearer " + gk },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
+          model: "openai/gpt-oss-120b",
           max_tokens: 1500,
           temperature: 0.85,
           messages: [{ role: "user", content: prompt }],
