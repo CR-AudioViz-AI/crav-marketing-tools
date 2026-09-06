@@ -81,7 +81,7 @@ const javari_PRODUCTS = [
     url: 'https://craudiovizai.com/tools/email-builder',
     features: ['AI copywriting', 'Templates', 'A/B testing'],
     pricing: 'Included in subscription',
-    tags: ['email', 'marketing', 'campaigns'],
+    tags: ['email', 'marketing', 'js_campaigns'],
   },
   {
     id: 'script-writer',
