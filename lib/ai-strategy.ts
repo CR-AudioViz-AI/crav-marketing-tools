@@ -151,7 +151,7 @@ Generate a JSON response with this EXACT structure:
       "phase": 1,
       "name": "Phase name",
       "duration": "X weeks",
-      "activities": ["Activity 1", "Activity 2"],
+      "bv_activities": ["Activity 1", "Activity 2"],
       "milestones": ["Milestone 1"]
     }
   ],
