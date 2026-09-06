@@ -347,7 +347,7 @@ export class CampaignManager {
   async createCampaign(campaign: Campaign): Promise<{ success: boolean; data?: Campaign; error?: string }> {
     try {
       const { data, error } = await this.supabase
-        .from('campaigns')
+        .from('js_campaigns')
         .insert({
           user_id: campaign.userId,
           name: campaign.name,
@@ -380,7 +380,7 @@ export class CampaignManager {
   async getCampaign(id: string): Promise<{ success: boolean; data?: Campaign; error?: string }> {
     try {
       const { data, error } = await this.supabase
-        .from('campaigns')
+        .from('js_campaigns')
         .select('*')
         .eq('id', id)
         .single();
@@ -396,7 +396,7 @@ export class CampaignManager {
   async getUserCampaigns(userId: string): Promise<{ success: boolean; data?: Campaign[]; error?: string }> {
     try {
       const { data, error } = await this.supabase
-        .from('campaigns')
+        .from('js_campaigns')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
@@ -412,7 +412,7 @@ export class CampaignManager {
   async updateCampaign(id: string, updates: Partial<Campaign>): Promise<{ success: boolean; data?: Campaign; error?: string }> {
     try {
       const { data, error } = await this.supabase
-        .from('campaigns')
+        .from('js_campaigns')
         .update({
           name: updates.name,
           description: updates.description,
@@ -445,7 +445,7 @@ export class CampaignManager {
   async deleteCampaign(id: string): Promise<{ success: boolean; error?: string }> {
     try {
       const { error } = await this.supabase
-        .from('campaigns')
+        .from('js_campaigns')
         .delete()
         .eq('id', id);
 
