@@ -268,6 +268,35 @@ async function publishToMastodon(content: string, credentials: { instance_url: s
   }
 }
 
+
+/**
+ * 2026-09-07: the caller must own the tenant they are publishing as.
+ *
+ * This route took tenantId from the request, looked the tenant's user_id up from
+ * js_tenants, and used it for credit checks, deductions and refunds. The user id
+ * was therefore not taken from the request directly - which is why a naive read
+ * called it safe - but tenantId WAS, and nothing checked that the caller had any
+ * relationship to that tenant.
+ *
+ * So anyone could publish as any tenant and spend that tenant owner's credits.
+ * The indirection made it quieter, not safer.
+ *
+ * The ownership check happens after the tenant is loaded, because it needs the
+ * tenant row to compare against - and it happens before anything is spent.
+ */
+async function __callerId(request: Request): Promise<string | null> {
+  const header = request.headers.get('authorization') ?? '';
+  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : null;
+  if (!token) return null;
+  try {
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error || !data?.user) return null;
+    return data.user.id as string;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(request: NextRequest) {
   let transactionId: string | undefined;
   let userId: string | undefined;
@@ -290,6 +319,23 @@ export async function POST(request: NextRequest) {
     
     userId = tenant?.user_id;
     isOwnerBypass = tenant?.is_owner_bypass === true;
+
+    // The caller must be the tenant's owner. Checked before any credit is spent.
+    const caller = await __callerId(request);
+    if (!caller) {
+      return NextResponse.json(
+        { error: 'Sign in required.', code: 'AUTH_REQUIRED' },
+        { status: 401 },
+      );
+    }
+    if (!userId || caller !== userId) {
+      // Deliberately 404 rather than 403: confirming that a tenant id exists but
+      // belongs to somebody else tells an attacker which ids are real.
+      return NextResponse.json(
+        { error: 'Not found', code: 'NOT_FOUND' },
+        { status: 404 },
+      );
+    }
 
     // Get post
     const { data: post, error: postError } = await supabase
