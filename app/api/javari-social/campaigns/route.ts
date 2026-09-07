@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
     const { data: campaigns, error } = await query;
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     const limits = await checkCampaignLimit(tenantId);
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -220,7 +220,7 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, campaign });
@@ -271,7 +271,7 @@ export async function DELETE(request: NextRequest) {
       .eq('tenant_id', tenantId);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, message: 'Campaign deleted' });
