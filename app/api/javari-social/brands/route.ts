@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (error) {
-        return NextResponse.json({ error: error.message }, { status: 404 });
+        return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 404 });
       }
 
       return NextResponse.json({ brand });
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
       .order('name');
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     // Check if agency (can have multiple brands)
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, brand });
@@ -193,7 +193,7 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, brand });
@@ -249,7 +249,7 @@ export async function DELETE(request: NextRequest) {
       .eq('tenant_id', tenantId);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, message: 'Brand deleted' });
