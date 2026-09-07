@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     .order('platform');
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
   }
 
   return NextResponse.json({
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -126,7 +126,7 @@ export async function DELETE(request: NextRequest) {
     .eq('platform', platform.toLowerCase());
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'The request could not be completed.', code: 'INTERNAL_ERROR' }, { status: 500 });
   }
 
   return NextResponse.json({
